@@ -4,22 +4,26 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class VerifyApiToken
 {
     public function handle(Request $request, Closure $next)
     {
-        $token = $request->bearerToken();
-        $expectedToken = env('API_TOKEN');
-        
-        if (!$token || $token !== $expectedToken) {
+        $token = $request->header('X-API-Key') 
+               ?? $request->header('Authorization');
+
+        // Si viene como "Bearer mitoken", extraemos solo el token
+        if ($token && str_starts_with($token, 'Bearer ')) {
+            $token = substr($token, 7);
+        }
+
+        if (!$token || $token !== config('app.api_secret_key')) {
             return response()->json([
                 'success' => false,
-                'message' => 'No autorizado. Token inválido o faltante.'
+                'message' => 'No autorizado. Token inválido o ausente.'
             ], 401);
         }
-        
+
         return $next($request);
     }
 }
