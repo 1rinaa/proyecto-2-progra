@@ -9,7 +9,9 @@
         @error="onImgError"
       />
       <span class="badge-formato">{{ pelicula.formato }}</span>
-      <span v-if="pelicula.destacado" class="badge-top">★ TOP</span>
+      <span v-if="pelicula.destacado" class="badge-top">
+        <i class="pi pi-star-fill"></i> TOP
+      </span>
     </div>
 
     <!-- Cuerpo -->
@@ -19,7 +21,7 @@
       <div class="card-footer-row">
         <span class="precio">₡{{ formatPrecio(pelicula.precio) }}</span>
         <span v-if="pelicula.calificacion_imdb" class="imdb">
-          ★ {{ pelicula.calificacion_imdb }}
+          <i class="pi pi-star-fill"></i> {{ pelicula.calificacion_imdb }}
         </span>
       </div>
     </div>

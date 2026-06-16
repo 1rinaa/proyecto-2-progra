@@ -12,7 +12,6 @@ import AppFooter from './components/AppFooter.vue'
 </script>
 
 <style>
-/* Variables globales — mismo diseño que el proyecto 1 */
 :root {
   --cine-rojo:   #dc3545;
   --cine-oscuro: #0a0a0f;

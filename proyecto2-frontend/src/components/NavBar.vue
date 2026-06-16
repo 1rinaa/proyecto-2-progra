@@ -6,9 +6,9 @@
         🎬 CINE<span>STORE</span>
       </RouterLink>
 
-      <!-- Botón menú hamburguesa (solo móvil) -->
+      <!-- Botón hamburguesa -->
       <button class="menu-toggle" @click="menuAbierto = !menuAbierto">
-        <i :class="menuAbierto ? 'bi bi-x-lg' : 'bi bi-list'"></i>
+        <i :class="menuAbierto ? 'pi pi-times' : 'pi pi-bars'"></i>
       </button>
 
       <!-- Búsqueda con autocompletado -->
@@ -26,8 +26,9 @@
           @keydown.escape="cerrarSugerencias"
           autocomplete="off"
         />
+        <!-- Botón buscar -->
         <button class="search-btn" @click="buscar">
-          <i class="bi bi-search"></i>
+          <i class="pi pi-search"></i>
         </button>
       </div>
 
@@ -49,24 +50,61 @@
               <span class="sug-titulo">{{ item.titulo }}</span>
               <span class="sug-meta">{{ item.anio_lanzamiento }} · ₡{{ formatPrecio(item.precio) }}</span>
             </div>
-            <i class="bi bi-arrow-right sug-flecha"></i>
+            <!-- Flecha en sugerencias -->
+            <i class="pi pi-arrow-right sug-flecha"></i>
           </div>
         </div>
       </div>
 
-      <!-- Links desktop -->
+      <!-- Links desktop con clases de estado activo -->
       <ul class="nav-links desktop-links">
-        <li><RouterLink to="/" @click="menuAbierto = false">Inicio</RouterLink></li>
-        <li><RouterLink to="/catalogo" @click="menuAbierto = false">Catálogo</RouterLink></li>
+        <li>
+          <RouterLink 
+            to="/" 
+            class="nav-link" 
+            exact-active-class="nav-link-active"
+            @click="menuAbierto = false"
+          >
+            Inicio
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink 
+            to="/catalogo" 
+            class="nav-link" 
+            active-class="nav-link-active"
+            @click="menuAbierto = false"
+          >
+            Catálogo
+          </RouterLink>
+        </li>
       </ul>
     </div>
 
-    <!-- Menú móvil desplegable -->
+    <!-- Menú móvil desplegable con clases de estado activo -->
     <Transition name="mobile-menu">
       <div v-if="menuAbierto && esMovil" class="mobile-menu">
         <ul class="mobile-nav-links">
-          <li><RouterLink to="/" @click="menuAbierto = false">Inicio</RouterLink></li>
-          <li><RouterLink to="/catalogo" @click="menuAbierto = false">Catálogo</RouterLink></li>
+          <li>
+            <RouterLink 
+              to="/" 
+              class="mobile-nav-link"
+              exact-active-class="mobile-nav-link-active"
+              @click="menuAbierto = false"
+            >
+              Inicio
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink 
+              to="/catalogo" 
+              class="mobile-nav-link"
+              active-class="mobile-nav-link-active"
+              @click="menuAbierto = false"
+            >
+              Catálogo
+            </RouterLink>
+          </li>
         </ul>
       </div>
     </Transition>
@@ -284,6 +322,46 @@ onUnmounted(() => {
 }
 .navbar-brand span { color: var(--cine-rojo); }
 
+.nav-link {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.3rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: #aaa;
+  background: rgba(220, 53, 70, 0.1);
+  text-decoration: none;
+}
+
+
+.nav-link-active {
+  color: var(--cine-rojo) !important;
+  background: rgba(220, 53, 70, 0.026);
+  font-weight: 600;
+}
+
+.nav-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: var(--cine-rojo);
+  border-radius: 2px;
+}
+
+.nav-link-active:hover {
+  color: var(--cine-rojo) !important;
+  background: rgba(220, 53, 70, 0.11);
+}
+
 /* Botón menú hamburguesa - visible solo en móvil */
 .menu-toggle {
   display: none;
@@ -371,6 +449,33 @@ onUnmounted(() => {
 .mobile-nav-links a:hover,
 .mobile-nav-links a.router-link-active {
   color: var(--cine-rojo);
+}
+
+.mobile-nav-link {
+  color: #ddd;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: block;
+  padding: 0.5rem 0;
+  transition: all 0.2s ease;
+  border-radius: 0.3rem;
+  padding: 0.5rem 0.8rem;
+}
+
+.mobile-nav-link:hover {
+  color: #fff;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.mobile-nav-link-active {
+  color: var(--cine-rojo) !important;
+  background: rgba(220, 53, 69, 0.15);
+  font-weight: 600;
+}
+
+.mobile-nav-link-active:hover {
+  color: var(--cine-rojo) !important;
+  background: rgba(220, 53, 69, 0.25);
 }
 
 /* Animación del menú móvil */

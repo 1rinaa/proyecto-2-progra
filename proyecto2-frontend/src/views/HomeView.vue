@@ -7,8 +7,13 @@
         <p class="hero-sub">
           Más de 500 títulos en DVD, Blu-ray y 4K UHD. Entrega a todo Costa Rica.
         </p>
-        <RouterLink to="/catalogo" class="btn-hero">
-          <i class="bi bi-collection-play"></i> Ver catálogo completo
+        <RouterLink to="/catalogo">
+          <Button
+            label="Ver catálogo completo"
+            icon="pi pi-play-circle"
+            size="large"
+            class="btn-hero"
+          />
         </RouterLink>
       </div>
     </section>
@@ -16,11 +21,11 @@
     <!-- DESTACADAS -->
     <section class="seccion">
       <h2 class="seccion-titulo">
-        <i class="bi bi-star-fill" style="color:#ffc107"></i> Destacadas
+        <i class="pi pi-star-fill" style="color:#ffc107"></i> Destacadas
       </h2>
-      <div v-if="loadingDestacadas" class="loading-txt">
-        <div class="spinner"></div>
-        Cargando películas destacadas...
+      <div v-if="loadingDestacadas" class="flex flex-column align-items-center justify-content-center py-6 gap-3">
+        <ProgressSpinner strokeWidth="3" style="width:40px;height:40px" />
+        <span class="text-color-secondary text-sm">Cargando películas destacadas...</span>
       </div>
       <div v-else class="grid-6">
         <PeliculaCard v-for="p in destacadas" :key="p.id" :pelicula="p" />
@@ -31,9 +36,9 @@
     <section class="seccion seccion-gris">
       <div class="seccion-inner">
         <h2 class="seccion-titulo">🎭 Explorar por categoría</h2>
-        <div v-if="loadingCats" class="loading-txt">
-          <div class="spinner"></div>
-          Cargando categorías...
+        <div v-if="loadingCats" class="flex flex-column align-items-center justify-content-center py-6 gap-3">
+          <ProgressSpinner strokeWidth="3" style="width:40px;height:40px" />
+          <span class="text-color-secondary text-sm">Cargando categorías...</span>
         </div>
         <div v-else class="grid-categorias">
           <RouterLink
@@ -42,7 +47,7 @@
             :to="`/categorias/${cat.slug}`"
             class="cat-card"
           >
-            <i :class="`bi bi-${cat.icono}`" class="cat-icono"></i>
+            <i :class="`pi pi-${cat.icono}`" class="cat-icono"></i>
             <div class="cat-nombre">{{ cat.nombre }}</div>
             <div class="cat-count">{{ cat.peliculas_count }} títulos</div>
           </RouterLink>
@@ -52,22 +57,24 @@
 
     <!-- NOVEDADES -->
     <section class="seccion">
-      <div class="seccion-header">
+      <div class="flex justify-content-between align-items-center mb-4">
         <h2 class="seccion-titulo mb-0">🆕 Novedades</h2>
-        <RouterLink to="/catalogo" class="ver-todas">
-          Ver todas <i class="bi bi-arrow-right"></i>
+        <RouterLink to="/catalogo">
+          <Button
+            label="Ver todas"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            text
+            class="ver-todas-btn"
+          />
         </RouterLink>
       </div>
-      <div v-if="loadingRecientes" class="loading-txt">
-        <div class="spinner"></div>
-        Cargando novedades...
+      <div v-if="loadingRecientes" class="flex flex-column align-items-center justify-content-center py-6 gap-3">
+        <ProgressSpinner strokeWidth="3" style="width:40px;height:40px" />
+        <span class="text-color-secondary text-sm">Cargando novedades...</span>
       </div>
       <div v-else class="grid-4">
-        <PeliculaCard
-          v-for="p in recientes"
-          :key="p.id"
-          :pelicula="p"
-        />
+        <PeliculaCard v-for="p in recientes" :key="p.id" :pelicula="p" />
       </div>
     </section>
   </div>
@@ -75,33 +82,39 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import Button from 'primevue/button'
+import ProgressSpinner from 'primevue/progressspinner'
 import PeliculaCard from '../components/PeliculaCard.vue'
 import { peliculaService } from '../services/peliculaService'
 import { categoriaService } from '../services/categoriaService'
 
-const destacadas     = ref([])
-const recientes      = ref([])
-const categorias     = ref([])
-const loadingCats    = ref(true)
+const destacadas       = ref([])
+const recientes        = ref([])
+const categorias       = ref([])
+const loadingCats      = ref(true)
 const loadingRecientes = ref(true)
 const loadingDestacadas = ref(true)
 
 onMounted(async () => {
-  // Carga en paralelo
   const [destRes, recRes, catRes] = await Promise.allSettled([
     peliculaService.getDestacadas(),
     peliculaService.getRecientes(),
     categoriaService.getAll(),
   ])
 
-  if (destRes.status === 'fulfilled') destacadas.value = destRes.value.data
-  if (recRes.status === 'fulfilled')  { recientes.value = recRes.value.data; loadingRecientes.value = false }
-  if (catRes.status === 'fulfilled')  { categorias.value = catRes.value.data; loadingCats.value = false }
   if (destRes.status === 'fulfilled') {
     destacadas.value = destRes.value.data
     loadingDestacadas.value = false
   }
-  loadingCats.value    = false
+  if (recRes.status === 'fulfilled') {
+    recientes.value = recRes.value.data
+    loadingRecientes.value = false
+  }
+  if (catRes.status === 'fulfilled') {
+    categorias.value = catRes.value.data
+    loadingCats.value = false
+  }
+  loadingCats.value     = false
   loadingRecientes.value = false
 })
 </script>
@@ -123,18 +136,21 @@ onMounted(async () => {
 }
 .hero h1 span { color: var(--cine-rojo); }
 .hero-sub { color: #aaa; font-size: 1.1rem; margin-bottom: 2rem; }
-.btn-hero {
-  display: inline-block;
+
+/* Botón hero con color cine */
+:deep(.btn-hero.p-button) {
   background: var(--cine-rojo);
-  color: #fff;
-  padding: 0.75rem 2.5rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
+  border-color: var(--cine-rojo);
   font-size: 1rem;
   font-weight: 600;
-  transition: opacity 0.2s;
+  padding: 0.75rem 2.5rem;
+  border-radius: 0.5rem;
 }
-.btn-hero:hover { opacity: 0.85; }
+:deep(.btn-hero.p-button:hover) { opacity: 0.85; background: var(--cine-rojo); border-color: var(--cine-rojo); }
+
+/* Botón "ver todas" */
+:deep(.ver-todas-btn.p-button) { color: var(--cine-rojo); }
+:deep(.ver-todas-btn.p-button:hover) { background: transparent; color: var(--cine-rojo); text-decoration: underline; }
 
 /* ── Secciones ── */
 .seccion {
@@ -155,20 +171,8 @@ onMounted(async () => {
   color: #fff;
   margin-bottom: 1.25rem;
 }
-.seccion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-.ver-todas {
-  color: var(--cine-rojo);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-.ver-todas:hover { text-decoration: underline; }
 
-/* ── Grids ── */
+/* ── Grids de películas ── */
 .grid-6 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -206,42 +210,8 @@ onMounted(async () => {
   display: block;
   transition: border-color 0.2s, background 0.2s;
 }
-.cat-card:hover {
-  border-color: var(--cine-rojo);
-  background: #1a0510;
-}
-.cat-icono {
-  font-size: 1.8rem;
-  color: var(--cine-rojo);
-  display: block;
-  margin-bottom: 0.4rem;
-}
+.cat-card:hover { border-color: var(--cine-rojo); background: #1a0510; }
+.cat-icono { font-size: 1.8rem; color: var(--cine-rojo); display: block; margin-bottom: 0.4rem; }
 .cat-nombre { font-weight: 600; color: #fff; font-size: 0.9rem; }
 .cat-count  { color: #888; font-size: 0.75rem; margin-top: 0.2rem; }
-
-.loading-txt { color: #888; text-align: center; padding: 2rem; }
-
-.loading-txt {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 0;
-  gap: 1rem;
-  color: #888;
-  font-size: 0.9rem;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #2a2a40;
-  border-top-color: var(--cine-rojo);
-  border-radius: 50%;
-  animation: girar 0.8s linear infinite;
-}
-
-@keyframes girar {
-  to { transform: rotate(360deg); }
-}
 </style>

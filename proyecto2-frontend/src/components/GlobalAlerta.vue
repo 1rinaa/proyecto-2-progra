@@ -2,7 +2,7 @@
   <Transition name="alerta">
     <div v-if="visible" :class="['global-alerta', `alerta-${tipo}`]">
       <div class="alerta-inner">
-        <i :class="tipo === 'exito' ? 'bi bi-check-circle' : 'bi bi-exclamation-triangle'"></i>
+        <i :class="tipo === 'exito' ? 'pi pi-check-circle' : 'pi pi-exclamation-triangle'"></i>
         <span class="alerta-mensaje">{{ mensaje }}</span>
         <button class="alerta-cerrar" @click="cerrar">×</button>
       </div>
