@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8000/api'
+const API_URL = 'https://cinestore.site.je/api'
 const API_KEY = 'proyecto_progra_web2'
 
 const api = axios.create({
