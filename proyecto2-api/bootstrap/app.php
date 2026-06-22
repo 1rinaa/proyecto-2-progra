@@ -5,7 +5,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\VerifyApiToken; 
 
-return Application::configure(basePath: dirname(__DIR__))
+$basePath = realpath(__DIR__ . '/..');
+
+return Application::configure(basePath: $basePath)
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',  
@@ -13,10 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-    $middleware->alias([
-        'verify.token' => \App\Http\Middleware\VerifyApiToken::class,
-    ]);
-})
+        $middleware->alias([
+            'verify.token' => \App\Http\Middleware\VerifyApiToken::class,
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
